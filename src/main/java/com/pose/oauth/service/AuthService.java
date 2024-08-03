@@ -1,9 +1,11 @@
 package com.pose.oauth.service;
 
 import com.pose.oauth.common.CertificationNumber;
+import com.pose.oauth.dto.request.auth.CheckCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.EmailCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.IdCheckRequestDto;
 import com.pose.oauth.dto.response.ResponseDto;
+import com.pose.oauth.dto.response.auth.CheckCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.EmailCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.IdCheckResponseDto;
 import com.pose.oauth.entity.Certification;
@@ -13,6 +15,8 @@ import com.pose.oauth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +62,26 @@ public class AuthService {
         }
 
         return EmailCertificationResponseDto.success();
+    }
+
+    public ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto) {
+        try {
+
+            String userId = dto.getId();
+            String email = dto.getEmail();
+            String certificationNumber = dto.getCertificationNumber();
+
+            Certification certification = certificationRepository.findByUserId(userId);
+            if (certification == null) return CheckCertificationResponseDto.certificationFail();
+
+            boolean isMatch = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
+            if(!isMatch) return CheckCertificationResponseDto.certificationFail();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return CheckCertificationResponseDto.success();
     }
 }

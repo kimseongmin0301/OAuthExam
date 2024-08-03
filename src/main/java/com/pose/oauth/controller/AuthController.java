@@ -1,7 +1,9 @@
 package com.pose.oauth.controller;
 
+import com.pose.oauth.dto.request.auth.CheckCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.EmailCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.IdCheckRequestDto;
+import com.pose.oauth.dto.response.auth.CheckCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.EmailCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.IdCheckResponseDto;
 import com.pose.oauth.service.AuthService;
@@ -29,6 +31,12 @@ public class AuthController {
     @PostMapping("/email-certification")
     public ResponseEntity<? super EmailCertificationResponseDto> emailCertification (@RequestBody @Valid EmailCertificationRequestDto dto) {
         ResponseEntity<? super EmailCertificationResponseDto> res = authService.emailCertification(dto);
+        return res;
+    }
+
+    @PostMapping("/check-certification")
+    public ResponseEntity<? super CheckCertificationResponseDto> emailCertification (@RequestBody @Valid CheckCertificationRequestDto dto) {
+        ResponseEntity<? super CheckCertificationResponseDto> res = authService.checkCertification(dto);
         return res;
     }
 }

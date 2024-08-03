@@ -8,4 +8,6 @@ public interface ResponseCode {
     String CERTIFICATION_FAIL = "CF";
     String DATABASE_ERROR = "DBE";
     String MAIL_FAIL = "MF";
+
+    String DIFFERENT_CODE = "DC";
 }

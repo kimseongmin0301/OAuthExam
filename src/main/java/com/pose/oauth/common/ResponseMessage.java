@@ -8,4 +8,6 @@ public interface ResponseMessage {
     String CERTIFICATION_FAIL = "Certification failed.";
     String DATABASE_ERROR = "Database error.";
     String MAIL_FAIL = "Mail send failed.";
+
+    String DIFFERENT_CODE = "Different code.";
 }
