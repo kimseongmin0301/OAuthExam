@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
@@ -39,10 +41,13 @@ public class WebSecurityConfig {
                 .httpBasic(HttpBasicConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(header -> header
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/user/**").hasRole("USER")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))

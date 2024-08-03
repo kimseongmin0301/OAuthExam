@@ -18,5 +18,9 @@ spring:
     username: sa
     password: 1234
 
+  jpa:
+    hibernate:
+      ddl-auto: none
+
 # JWT Secret Key
 secret-key: key
