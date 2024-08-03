@@ -1,0 +1,22 @@
+# 서버 설정
+server:
+  port: 4040
+
+spring:
+  application:
+    name: oauth
+
+  # 데이터 소스 설정
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/test
+    username: sa
+    password: 1234
+
+# JWT Secret Key
+secret-key: key
