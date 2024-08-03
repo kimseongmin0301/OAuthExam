@@ -22,5 +22,17 @@ spring:
     hibernate:
       ddl-auto: none
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: poceania1358@gmail.com
+    password: aiin iwhz zekw dten
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 # JWT Secret Key
 secret-key: key
