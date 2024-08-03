@@ -3,9 +3,11 @@ package com.pose.oauth.controller;
 import com.pose.oauth.dto.request.auth.CheckCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.EmailCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.IdCheckRequestDto;
+import com.pose.oauth.dto.request.auth.SignUpRequestDto;
 import com.pose.oauth.dto.response.auth.CheckCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.EmailCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.IdCheckResponseDto;
+import com.pose.oauth.dto.response.auth.SignUpResponseDto;
 import com.pose.oauth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,12 @@ public class AuthController {
     @PostMapping("/check-certification")
     public ResponseEntity<? super CheckCertificationResponseDto> emailCertification (@RequestBody @Valid CheckCertificationRequestDto dto) {
         ResponseEntity<? super CheckCertificationResponseDto> res = authService.checkCertification(dto);
+        return res;
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<? super SignUpResponseDto> signUp (@RequestBody @Valid SignUpRequestDto dto) {
+        ResponseEntity<? super SignUpResponseDto> res = authService.signUp(dto);
         return res;
     }
 }

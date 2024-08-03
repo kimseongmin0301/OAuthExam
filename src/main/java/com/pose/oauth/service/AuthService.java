@@ -4,16 +4,21 @@ import com.pose.oauth.common.CertificationNumber;
 import com.pose.oauth.dto.request.auth.CheckCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.EmailCertificationRequestDto;
 import com.pose.oauth.dto.request.auth.IdCheckRequestDto;
+import com.pose.oauth.dto.request.auth.SignUpRequestDto;
 import com.pose.oauth.dto.response.ResponseDto;
 import com.pose.oauth.dto.response.auth.CheckCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.EmailCertificationResponseDto;
 import com.pose.oauth.dto.response.auth.IdCheckResponseDto;
+import com.pose.oauth.dto.response.auth.SignUpResponseDto;
 import com.pose.oauth.entity.Certification;
+import com.pose.oauth.entity.User;
 import com.pose.oauth.provider.EmailProvider;
 import com.pose.oauth.repository.CertificationRepository;
 import com.pose.oauth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,6 +30,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final EmailProvider emailProvider;
     private final CertificationRepository certificationRepository;
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public ResponseEntity<? super IdCheckResponseDto> idCheck(IdCheckRequestDto dto) {
         try {
@@ -83,5 +89,39 @@ public class AuthService {
         }
 
         return CheckCertificationResponseDto.success();
+    }
+
+    public ResponseEntity<? super SignUpResponseDto> signUp(SignUpRequestDto dto) {
+        try {
+
+            String userId = dto.getId();
+            boolean isExistId = userRepository.existsByUserId(userId);
+            if(isExistId) return SignUpResponseDto.duplicateId();
+
+            String email = dto.getEmail();
+            String certificationNumber = dto.getCertificationNumber();
+
+            Certification certification = certificationRepository.findByUserId(userId);
+            boolean isMatch = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
+            if(!isMatch) return SignUpResponseDto.certificationFail();
+
+            String password = dto.getPassword();
+            String encodedPassword = passwordEncoder.encode(password);
+
+            SignUpRequestDto encodedPasswordDto = dto.toBuilder()
+                    .password(encodedPassword)
+                    .build();
+
+            User user = new User(encodedPasswordDto);
+            userRepository.save(user);
+
+            certificationRepository.deleteById(userId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return SignUpResponseDto.success();
     }
 }
