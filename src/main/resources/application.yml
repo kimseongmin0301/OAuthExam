@@ -35,4 +35,4 @@ spring:
             enable: true
 
 # JWT Secret Key
-secret-key: key
+secret-key: thisissecretkeyoauthtestexamplestudy

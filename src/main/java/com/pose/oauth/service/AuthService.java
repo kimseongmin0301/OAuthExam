@@ -1,22 +1,18 @@
 package com.pose.oauth.service;
 
 import com.pose.oauth.common.CertificationNumber;
-import com.pose.oauth.dto.request.auth.CheckCertificationRequestDto;
-import com.pose.oauth.dto.request.auth.EmailCertificationRequestDto;
-import com.pose.oauth.dto.request.auth.IdCheckRequestDto;
-import com.pose.oauth.dto.request.auth.SignUpRequestDto;
+import com.pose.oauth.dto.request.auth.*;
 import com.pose.oauth.dto.response.ResponseDto;
-import com.pose.oauth.dto.response.auth.CheckCertificationResponseDto;
-import com.pose.oauth.dto.response.auth.EmailCertificationResponseDto;
-import com.pose.oauth.dto.response.auth.IdCheckResponseDto;
-import com.pose.oauth.dto.response.auth.SignUpResponseDto;
+import com.pose.oauth.dto.response.auth.*;
 import com.pose.oauth.entity.Certification;
 import com.pose.oauth.entity.User;
 import com.pose.oauth.provider.EmailProvider;
+import com.pose.oauth.provider.JwtProvider;
 import com.pose.oauth.repository.CertificationRepository;
 import com.pose.oauth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +26,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final EmailProvider emailProvider;
     private final CertificationRepository certificationRepository;
+
+    private final JwtProvider jwtProvider;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public ResponseEntity<? super IdCheckResponseDto> idCheck(IdCheckRequestDto dto) {
@@ -123,5 +121,28 @@ public class AuthService {
         }
 
         return SignUpResponseDto.success();
+    }
+
+    public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
+
+        String token = "";
+        try {
+            String userId = dto.getId();
+            User user = userRepository.findByUserId(userId);
+            if (user == null) SignInResponseDto.signInFail();
+
+            String password = dto.getPassword();
+            String encodedPassword = user.getPassword();
+            boolean isMatched = passwordEncoder.matches(password, encodedPassword);
+            if (!isMatched) return SignInResponseDto.signInFail();
+
+            token = jwtProvider.create(userId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return SignInResponseDto.success(token);
     }
 }

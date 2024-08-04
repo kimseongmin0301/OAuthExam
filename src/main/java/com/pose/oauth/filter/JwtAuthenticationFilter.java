@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -45,8 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Optional<User> optionalUser = userRepository.findByUserId(userId);
-            User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userRepository.findByUserId(userId);
             String role = user.getRole();
 
             List<GrantedAuthority> authorities = new ArrayList<>();
