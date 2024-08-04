@@ -19,6 +19,12 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    /**
+     * OAuth 설정
+     * @param req the user request
+     * @return
+     * @throws OAuth2AuthenticationException
+     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest req) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(req);

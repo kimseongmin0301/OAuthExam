@@ -6,7 +6,7 @@ spring:
   application:
     name: oauth
 
-  # 데이터 소스 설정
+# 데이터 소스 설정
   h2:
     console:
       enabled: true
@@ -34,7 +34,7 @@ spring:
           starttls:
             enable: true
 
-  # Kakao OAuth2.0
+# Kakao OAuth2.0
   security:
     oauth2:
       client:
@@ -54,7 +54,7 @@ spring:
             authorization-grant-type: authorization_code
             scope: email
 
-  # Kakao OAuth2 Provider
+# Kakao OAuth2 Provider
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize

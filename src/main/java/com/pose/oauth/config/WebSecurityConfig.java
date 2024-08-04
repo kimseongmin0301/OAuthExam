@@ -42,6 +42,7 @@ public class WebSecurityConfig {
                         .configurationSource(corsConfigurationSource()))
                 .csrf(CsrfConfigurer::disable)
                 .httpBasic(HttpBasicConfigurer::disable)
+                // jwt 사용하므로 세션 X
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(header -> header
@@ -52,6 +53,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated())
+                // oauth2 설정
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
@@ -64,6 +66,11 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+
+    /**
+     * CORS 처리
+     * @return
+     */
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -78,6 +85,9 @@ public class WebSecurityConfig {
     }
 }
 
+/**
+ * 권한 처리
+ */
 class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
